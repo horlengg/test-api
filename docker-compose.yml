@@ -1,0 +1,39 @@
+version: '3.9'
+
+services:
+  
+  db:
+    container_name: postgres-db
+    image: postgres
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_USER: leng
+      POSTGRES_PASSWORD: leng
+      POSTGRES_DB: db_cms
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+  springapp:
+    container_name: cms_app_container
+    # image: cms_app
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 8080:8080
+    environment:
+      - DATABASE_URL=jdbc:postgresql://db:5432/db_cms
+      - DATABASE_USERNAME=leng
+      - DATABASE_PASSWORD=leng
+    depends_on:
+      - db
+  pgadmin:
+    image : dpage/pgadmin4
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=leng@gmail.com
+      - PGADMIN_DEFAULT_PASSWORD=leng
+    ports : 
+      - "9090:80"
+
+volumes:
+  pgdata: {}
